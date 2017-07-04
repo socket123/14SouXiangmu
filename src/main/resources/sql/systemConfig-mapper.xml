@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vrv.mapper.SysConfigMapper" >
+
+  <resultMap id="BaseResultMap" type="com.vrv.entity.SysConfig" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="timeset" property="timeset" jdbcType="VARCHAR" />
+    <result column="delivery_timeout" property="deliveryTimeout" jdbcType="INTEGER" />
+    <result column="receiv_timeout" property="receivTimeout" jdbcType="INTEGER" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <sql id="Base_Column_List" >
+    id, timeset, delivery_timeout, receiv_timeout, update_time
+  </sql>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from system_config
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+	<select id="findSystemConfig" resultMap="BaseResultMap">
+		SELECT * FROM system_config limit 1
+	</select>
+	
+	<insert id="insertSelective" parameterType="com.vrv.entity.SysConfig" useGeneratedKeys="true" keyProperty="id">
+    insert into system_config
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="timeset != null" >
+        timeset,
+      </if>
+      <if test="deliveryTimeout != null" >
+        delivery_timeout,
+      </if>
+      <if test="receivTimeout != null" >
+        receiv_timeout,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="timeset != null" >
+        #{timeset,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryTimeout != null" >
+        #{deliveryTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="receivTimeout != null" >
+        #{receivTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.vrv.entity.SysConfig" >
+    update system_config
+    <set >
+      <if test="timeset != null" >
+        timeset = #{timeset,jdbcType=VARCHAR},
+      </if>
+      <if test="deliveryTimeout != null" >
+        delivery_timeout = #{deliveryTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="receivTimeout != null" >
+        receiv_timeout = #{receivTimeout,jdbcType=INTEGER},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>

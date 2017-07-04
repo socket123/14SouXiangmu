@@ -1,0 +1,355 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vrv.mapper.TransportTeamMapper" >
+  <resultMap id="BaseResultMap" type="com.vrv.entity.TransportTeam" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="team_name" property="teamName" jdbcType="VARCHAR" />
+    <result column="user_id" property="userId" jdbcType="INTEGER" />
+    <result column="is_enable" property="isEnable" jdbcType="INTEGER" />
+    <result column="ability" property="ability" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="job_num" property="jobNum" jdbcType="VARCHAR"/>
+    <result column="catagory_id" property="catagoryId" jdbcType="INTEGER" />
+    <result column="team_type" property="teamType" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="workload" property="workload" jdbcType="INTEGER" />
+    <result column="orderNum" property="orderNum" jdbcType="INTEGER" />
+    <result column="startTime" property="startTime" jdbcType="VARCHAR"/>
+    <result column="endTime" property="endTime" jdbcType="VARCHAR"/>
+
+      <result column="user_name" property="user_name" jdbcType="VARCHAR"/>
+      <result column="telephone" property="telephone" jdbcType="VARCHAR"/>
+      <result column="is_big" property="is_big" jdbcType="VARCHAR"/>
+      <result column="branchrecip_worker_count" property="branchrecip_worker_count" jdbcType="VARCHAR"/>
+      <result column="branchsend_worker_count" property="branchsend_worker_count" jdbcType="VARCHAR"/>
+      <result column="trunk_worker_count" property="trunk_worker_count" jdbcType="VARCHAR"/>
+      <result column="counts" property="counts" jdbcType="VARCHAR"/>
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, team_name, user_id, is_enable, ability, create_time,catagory_id,team_type
+  </sql>
+
+
+
+
+
+
+    <!--根据 用户 user_id 获取团队 id-->
+    <select id="select_userId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+        select
+        <include refid="Base_Column_List" />
+        from transport_team
+        <where>
+            and user_id = #{user_id};
+        </where>
+    </select>
+
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from transport_team
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+
+    <!--民工 查询 -->
+    <select id="getList_workers" parameterType="java.util.Map" resultMap="BaseResultMap" >
+    SELECT su.id id,COALESCE(SUM( so3.`branchrecip_worker_count`),0) branchrecip_worker_count,
+    COALESCE(SUM( so2.`branchsend_worker_count`),0)  branchsend_worker_count,
+            COALESCE(SUM( so1.`trunk_worker_count`),0) trunk_worker_count,
+           su.user_name,su.telephone
+             FROM `ss_user` su
+             LEFT JOIN (SELECT * FROM `ss_order`
+             <where>
+                 and is_big = #{is_big}
+                 <if test="startTime != null and endTime != null" >
+                     and ((create_time BETWEEN #{startTime} and #{endTime}) or create_time like CONCAT('%','${endTime}','%' ) )
+                 </if>
+             </where>
+
+             ) so1 ON   so1.`trunk_worker_id` LIKE CONCAT('%,',su.`id`,',%')
+            LEFT JOIN (SELECT * FROM `ss_order`
+            <where>
+                and is_big = #{is_big}
+                <if test="startTime != null and endTime != null" >
+                    and ((create_time BETWEEN #{startTime} and #{endTime}) or create_time like CONCAT('%','${endTime}','%' ) )
+                </if>
+            </where>
+
+            ) so2 ON  so2.`branchsend_worker_id` LIKE CONCAT('%,',su.`id`,',%')
+
+            LEFT JOIN (SELECT * FROM `ss_order`
+            <where>
+                and is_big = #{is_big}
+                <if test="startTime != null and endTime != null" >
+                    and ((create_time BETWEEN #{startTime} and #{endTime}) or create_time like CONCAT('%','${endTime}','%' ) )
+                </if>
+            </where>
+
+            ) so3 ON   so3.`branchrecip_worker_id` LIKE CONCAT('%,',su.`id`,',%')
+
+        WHERE su.`is_worker` = 1
+            GROUP BY su.id
+    </select>
+
+    <!-- 团队 功能  查询 -->
+    <select id="getList_TuanDui" parameterType="java.util.Map" resultMap="BaseResultMap" >
+        SELECT tr.id id,tr.`team_name` user_name ,COUNT(so.id) counts FROM  `transport_team` tr
+        LEFT JOIN (SELECT * FROM `ss_order`
+        <where>
+              and is_big = #{is_big}
+            <if test="startTime != null and endTime != null" >
+                and ((create_time BETWEEN #{startTime} and #{endTime}) or create_time like CONCAT('%','${endTime}','%' ) )
+            </if>
+
+        </where>
+        ) so ON ( tr.`id` LIKE CONCAT('%',so.trunk_id ,',%') OR tr.`id` = so.branchsend_id OR tr.`id` = so.branchrecip_id )
+
+        GROUP BY tr.id
+    </select>
+
+
+
+    <!-- 团队负责人工作量 查询 -->
+    <select id="getList_userGongzuoLiang" parameterType="java.util.Map" resultMap="BaseResultMap" >
+        SELECT  su.`id` id ,su.`user_name` user_name,
+        COALESCE(SUM( so.`branchrecip_worker_count`),0) branchrecip_worker_count,
+        COALESCE(SUM( so.`branchsend_worker_count`),0)  branchsend_worker_count,
+        COALESCE(SUM( so.`trunk_worker_count`),0) trunk_worker_count
+        FROM transport_team t
+        LEFT JOIN (SELECT * FROM team_relation WHERE TYPE = 3)tr ON tr.team_id = t.id
+
+        LEFT JOIN `ss_user` su ON tr.other_id = su.`id`
+
+        LEFT JOIN
+        (SELECT * FROM `ss_order`
+        <where>
+            and is_big = #{is_big}
+            <if test="startTime != null and endTime != null" >
+                and ((create_time BETWEEN #{startTime} and #{endTime}) or create_time like CONCAT('%','${endTime}','%' ) )
+            </if>
+        </where>
+        )
+        so  ON t.`id` = so.`team_id`
+
+        GROUP BY tr.id
+    </select>
+
+
+
+  <select id="getList" parameterType="java.util.Map" resultMap="BaseResultMap">
+	 select tt.*,a.* from transport_team tt 
+            left join (
+                    select tr.team_id,
+                        GROUP_CONCAT(su.job_num)  as jobNum 
+                        from   team_relation tr 
+						left join ss_user su
+						on  su.id=tr.other_id
+                        where tr.type=3  group by tr.team_id
+                     ) a 
+             on a.team_id=tt.id 
+     where 1=1
+      <if test="id != null and '' != id">
+		   AND tt.id =#{id}
+	</if>
+	 <if test="catagoryId != null and '' != catagoryId">
+		   AND tt.catagory_id =#{catagoryId}
+	</if>
+    <if test="teamName != null and '' != teamName">
+		   AND tt.team_name like CONCAT('%','${teamName}','%' )
+	</if>
+	<if test="jobNum != null and '' != jobNum">
+		   AND a.jobNum  like CONCAT('%','${jobNum}','%' )
+	</if>
+   limit #{offset},#{size}
+  </select>
+  
+  <select id="getTotalCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+	SELECT count(*) FROM 
+	 (select tt.*,a.* from transport_team tt 
+            left join (
+                    select tr.team_id,
+                        GROUP_CONCAT(su.job_num)  as jobNum 
+                        from   team_relation tr 
+						left join ss_user su
+						on  su.id=tr.other_id
+                        where tr.type=3  group by tr.team_id
+                     ) a 
+             on a.team_id=tt.id 
+     where 1=1
+     <if test="id != null and '' != id">
+		   AND tt.id =#{id}
+	</if>
+	 <if test="catagoryId != null and '' != catagoryId">
+		   AND tt.catagory_id =#{catagoryId}
+	</if>
+    <if test="teamName != null and '' != teamName">
+		   AND tt.team_name like CONCAT('%','${teamName}','%' )
+	</if>
+	<if test="jobNum != null and '' != jobNum">
+		   AND a.jobNum  like CONCAT('%','${jobNum}','%' )
+	</if>
+	) aa
+</select>
+
+<select id="findTeamNameList" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+   select * from transport_team where catagory_id=#{catagoryId}
+</select>
+
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from transport_team
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="com.vrv.entity.TransportTeam" useGeneratedKeys="true" keyProperty="id">
+    insert into transport_team
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="teamName != null" >
+        team_name,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="isEnable != null" >
+        is_enable,
+      </if>
+      <if test="ability != null" >
+        ability,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="catagoryId != null" >
+        catagory_id,
+      </if>
+        <if test="teamType != null" >
+            team_type,
+        </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="teamName != null" >
+        #{teamName,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="isEnable != null" >
+        #{isEnable,jdbcType=INTEGER},
+      </if>
+      <if test="ability != null" >
+        #{ability,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="catagoryId != null" >
+        #{catagoryId,jdbcType=INTEGER},
+      </if>
+        <if test="teamType != null" >
+            #{teamType,jdbcType=INTEGER},
+        </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.vrv.entity.TransportTeam" >
+    update transport_team
+    <set >
+      <if test="teamName != null" >
+        team_name = #{teamName,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="isEnable != null" >
+        is_enable = #{isEnable,jdbcType=INTEGER},
+      </if>
+      <if test="ability != null" >
+        ability = #{ability,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="catagoryId != null" >
+        catagory_id = #{catagoryId,jdbcType=INTEGER},
+      </if>
+        <if test="teamType != null" >
+            team_type = #{teamType,jdbcType=INTEGER},
+        </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+ 
+ 	<select id="selectTeamByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+ 		SELECT t.* FROM transport_team t 
+		LEFT JOIN team_relation tr ON tr.team_id = t.id 
+		WHERE tr.other_id = #{userId} AND tr.type = 3
+ 	</select>
+
+    <select id="selectTeamAll" resultMap="BaseResultMap">
+        SELECT * FROM transport_team
+    </select>
+
+  <select id="findTeamAnalysis" resultMap="BaseResultMap" parameterType="java.lang.String">
+    select tt.id as id,tt.team_name as team_name ,(IFNULL(so.sl,0)+IFNULL(ss.sl,0)) as orderdata
+   from transport_team tt
+   left join (select count(*) as sl,branchrecip_id from ss_order where branchrecip_id !=''
+      <if test="startTime != null and endTime != null" >
+          and ((create_time BETWEEN #{startTime} and #{endTime}) or create_time like CONCAT('%','${endTime}','%' ) )
+      </if>
+    group by branchrecip_id) so
+   on so.branchrecip_id = tt.id
+   left join (select count(*) as sl,branchsend_id from ss_order where branchsend_id !=''
+      <if test="startTime != null and endTime != null" >
+          and ((create_time BETWEEN #{startTime} and #{endTime}) or create_time like CONCAT('%','${endTime}','%' ) )
+      </if>
+    group by branchsend_id) ss
+	 on ss.branchsend_id = tt.id
+  </select>
+
+    <select id="findTeamUserAnalysis" resultMap="BaseResultMap" parameterType="com.vrv.entity.TransportTeam">
+        select su.id as id,su.user_name as team_name,(IFNULL(so.sl,0)+IFNULL(ss.sl,0)) as orderdata from ss_user su
+        LEFT JOIN team_relation tr on su.id = tr.other_id
+        left join (select count(*) as sl,send_courier from ss_order where send_courier !=''
+        <if test="startTime != null and endTime != null" >
+            and ((create_time BETWEEN #{startTime} and #{endTime}) or create_time like CONCAT('%','${endTime}','%' ) )
+        </if>
+        group by send_courier) ss
+        on ss.send_courier = su.id
+        left join (select count(*) as sl,recip_courier from ss_order where recip_courier !=''
+        <if test="startTime != null and endTime != null" >
+            and ((create_time BETWEEN #{startTime} and #{endTime}) or create_time like CONCAT('%','${endTime}','%' ) )
+        </if>
+        group by recip_courier) so
+        on so.recip_courier = su.id
+        where tr.type = 3 and tr.team_id = #{id}
+    </select>
+
+    <select id="findTeamTrunkAnalysis" resultMap="BaseResultMap" parameterType="java.lang.String">
+        select tt.id as id,tt.team_name as team_name ,IFNULL(so.sl,0) as orderdata
+        from transport_team tt
+        left join (select count(*) as sl,trunk_id from ss_order where trunk_id !=''
+        <if test="startTime != null and endTime != null" >
+            and ((create_time BETWEEN #{startTime} and #{endTime}) or create_time like CONCAT('%','${endTime}','%' ) )
+        </if>
+        group by trunk_id) so
+        on so.trunk_id = tt.id
+    </select>
+
+    <select id="findTeamUserTrunkAnalysis" resultMap="BaseResultMap" parameterType="com.vrv.entity.TransportTeam">
+        select su.id as id,su.user_name as team_name,IFNULL(ss.sl,0) as orderdata from ss_user su
+        LEFT JOIN team_relation tr on su.id = tr.other_id
+        left join (select count(*) as sl,trunk_courier from ss_order where trunk_courier !=''
+        <if test="startTime != null and endTime != null" >
+            and ((create_time BETWEEN #{startTime} and #{endTime}) or create_time like CONCAT('%','${endTime}','%' ) )
+        </if>
+        group by trunk_courier) ss
+        on ss.trunk_courier = su.id
+        where tr.type = 3 and tr.team_id = #{id}
+    </select>
+
+</mapper>

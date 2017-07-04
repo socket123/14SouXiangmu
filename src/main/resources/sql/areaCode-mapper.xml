@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vrv.mapper.AreaCodeMapper" >
+  <resultMap id="BaseResultMap" type="com.vrv.entity.AreaCode" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="area_code" property="areaCode" jdbcType="VARCHAR" />
+    <result column="area_out" property="areaOut" jdbcType="VARCHAR" />
+    <result column="is_enable" property="isEnable" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="ssOrder" property="ssOrder" jdbcType="INTEGER"/>
+	  <result column="area_type" property="areaType" jdbcType="INTEGER" />
+    <result column="team_id" property="teamId" jdbcType="INTEGER"/>
+	  <result column="area_trunk" property="areaTrunk" jdbcType="VARCHAR" />
+
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, area_code, area_out, is_enable, create_time, user_id, area_type, area_trunk
+  </sql>
+  
+   <select id="selectAreaByTeamId" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+	    SELECT DISTINCT a.*,r.ss_order as ssOrder FROM area_code a
+		INNER JOIN team_relation r ON r.other_id = a.id 
+		WHERE r.type = 1 and r.team_id = #{teamId} order by r.ss_order asc
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from area_code
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from area_code
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+
+	<select id="findAreaCodeByPage" resultMap="BaseResultMap" parameterType="com.vrv.entity.AreaCode">
+		SELECT * FROM area_code
+	</select>	
+	
+	<select id="findGroupCodeByTeam" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+		SELECT a.id,GROUP_CONCAT(a.area_code) area_code,a.area_out,t.team_id FROM area_code a
+		LEFT JOIN team_relation t ON t.other_id = a.id
+		where a.is_enable =1 AND t.type = 1 and t.team_id = #{teamId}
+	</select>	
+	
+	<select id="getTotalCount" resultType="java.lang.Integer" parameterType="java.util.Map">
+		SELECT count(*) FROM area_code
+		<where>
+			<if test="areaCode != null and areaCode != ''">
+				and area_code like CONCAT('%','${areaCode}','%' )
+			</if>
+			<if test="isEnable != null">
+				and is_enable = #{isEnable}
+			</if>
+		</where> 
+	</select>
+	
+	<select id="getList" resultMap="BaseResultMap" parameterType="java.util.Map">
+		SELECT * FROM area_code
+		<where>
+			<if test="areaCode != null and areaCode != ''">
+				and area_code like CONCAT('%','${areaCode}','%' )
+			</if>
+			<if test="isEnable != null">
+				and is_enable = #{isEnable}
+			</if>
+		</where>
+		order by create_time
+		limit #{offset},#{size}
+	</select>
+	
+	<select id="findAreaCodeById" parameterType="java.lang.String" resultMap="BaseResultMap">
+		SELECT * FROM area_code
+		WHERE area_code=#{areaCode} 
+		limit 1
+	</select>
+	
+    <select id="findAreaByCode" parameterType="java.lang.String" resultType="java.lang.Integer">
+		SELECT count(*) FROM area_code where area_code=#{areaCode}
+	</select>
+	
+	
+	<insert id="insertSelective" parameterType="com.vrv.entity.AreaCode" useGeneratedKeys="true" keyProperty="id">
+    insert into area_code
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="areaCode != null" >
+        area_code,
+      </if>
+      <if test="areaOut != null" >
+        area_out,
+      </if>
+      <if test="isEnable != null" >
+        is_enable,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+		<if test="areaType != null" >
+			area_type,
+		</if>
+		<if test="areaTrunk != null" >
+			area_trunk,
+		</if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="areaCode != null" >
+        #{areaCode,jdbcType=VARCHAR},
+      </if>
+      <if test="areaOut != null" >
+        #{areaOut,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnable != null" >
+        #{isEnable,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+		<if test="areaType != null" >
+			#{areaType,jdbcType=INTEGER},
+		</if>
+    </trim>
+  </insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.vrv.entity.AreaCode" >
+	    update area_code
+	    <set >
+	      <if test="areaCode != null" >
+	        area_code = #{areaCode,jdbcType=VARCHAR},
+	      </if>
+	      <if test="areaOut != null" >
+	        area_out = #{areaOut,jdbcType=VARCHAR},
+	      </if>
+	      <if test="isEnable != null" >
+	        is_enable = #{isEnable,jdbcType=INTEGER},
+	      </if>
+	      <if test="createTime != null" >
+	        create_time = #{createTime,jdbcType=TIMESTAMP},
+	      </if>
+	      <if test="userId != null and ''!=userId" >
+	        user_id = #{userId,jdbcType=VARCHAR},
+	      </if>
+			<if test="areaType != null" >
+				area_type = #{areaType,jdbcType=INTEGER},
+			</if>
+			<if test="areaTrunk != null and ''!=areaTrunk" >
+				area_trunk = #{areaTrunk,jdbcType=VARCHAR},
+			</if>
+	    </set>
+	    where id = #{id,jdbcType=INTEGER}
+	  </update>
+	<select id="selectIfAreaByTeamId" resultMap="BaseResultMap" parameterType="com.vrv.entity.AreaCode">
+		SELECT DISTINCT a.*,r.ss_order as ssOrder FROM area_code a
+		INNER JOIN team_relation r ON r.other_id = a.id
+		WHERE r.type = 1 and r.team_id = #{teamId} AND area_code = ${areaCode} order by r.ss_order asc
+	</select>
+
+	<select id="selectAreaAll" resultMap="BaseResultMap" >
+		SELECT DISTINCT a.*,r.ss_order as ssOrder FROM area_code a
+		INNER JOIN team_relation r ON r.other_id = a.id
+		WHERE r.type = 1 order by r.ss_order asc
+	</select>
+</mapper>

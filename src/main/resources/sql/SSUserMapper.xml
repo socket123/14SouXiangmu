@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vrv.mapper.SSUserMapper" >
+  <resultMap id="BaseResultMap" type="com.vrv.entity.SSUser" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="job_num" property="jobNum" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+    <result column="is_open" property="isOpen" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="dd_id" property="ddId" jdbcType="VARCHAR" />
+    <result column="dd_user" property="ddUser" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="salt" property="salt" jdbcType="VARCHAR" />
+    <result column="is_team" property="isTeam" jdbcType="INTEGER"/>
+    <result column="is_worker" property="is_worker" jdbcType="INTEGER"/>
+    <result column="worker_status" property="worker_status" jdbcType="INTEGER"/>
+    <result column="team_id" property="teamId" jdbcType="VARCHAR" />
+    <result column="team_name" property="teamName" jdbcType="VARCHAR" />
+    <result column="ability" property="ability" jdbcType="VARCHAR" />
+    <result column="mycode" property="mycode" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, job_num, telephone, is_open, create_time, dd_id, dd_user, password, salt,is_team, user_name,is_worker,worker_status
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from ss_user
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+
+  <!--查询 民工-->
+  <select id="selectWorker" resultMap="BaseResultMap" parameterType="com.vrv.entity.SSUser" >
+    select
+    <include refid="Base_Column_List" />
+    from ss_user
+    <where>
+     and  is_worker = 1
+     and  worker_status = 2
+    </where>
+  </select>
+
+  
+  <select id="findUserById" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+	    select 
+	    <include refid="Base_Column_List" />
+	    from ss_user
+	    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="findJobNumById" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+      select 
+		su.* from ss_user su
+		left join team_relation tr 
+		on  su.id=tr.other_id
+		where tr.type=3 and tr.team_id=#{id}
+  </select>
+  
+  <select id="getList" parameterType="java.util.Map" resultMap="BaseResultMap">
+	 select * from ss_user where 1=1
+        <if test="jobNum != null and '' != jobNum">
+			AND job_num like CONCAT('%','${jobNum}','%' )
+		</if>
+        <if test="userName != null and '' != userName">
+			AND user_name like CONCAT('%','${userName}','%' )
+		</if>
+		<if test="telephone != null and '' != telephone">
+			AND telephone  like CONCAT('%','${telephone}','%' )
+		</if>
+		<if test="isTeam != null and '' != isTeam">
+			AND is_team=#{isTeam}
+		</if>
+	   limit #{offset},#{size}
+  </select>
+  
+  <select id="getTotalCount" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT count(*) FROM ss_user where 1=1
+	        <if test="jobNum != null and '' != jobNum">
+				AND job_num like CONCAT('%','${jobNum}','%' )
+			</if>
+			<if test="telephone != null and '' != telephone">
+				AND telephone  like CONCAT('%','${telephone}','%' )
+			</if>
+			<if test="isTeam != null and '' != isTeam">
+				AND is_team=#{isTeam}
+			</if>
+	</select>
+  
+  <select id="findByUserByJobNum" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(*) from ss_user where job_num = #{jobNum} or dd_id=#{ddId}
+  </select>
+  
+  <select id="findByUser" resultMap="BaseResultMap" parameterType="java.lang.String" >
+    select * from ss_user where job_num = #{jobNum}
+  </select>
+  
+   <select id="findUserList" resultMap="BaseResultMap">
+    select * from ss_user
+  </select>
+  
+   <select id="findTeamUser" resultMap="BaseResultMap" parameterType="java.lang.String">
+    SELECT * from (
+		SELECT su.job_num,su.telephone,su.dd_id,su.is_team,
+			temp.team_id,temp.team_name,temp.ability,GROUP_CONCAT(temp.area_code) as mycode
+		FROM ss_user su 
+			LEFT JOIN team_relation tr1 ON tr1.other_id = su.id 
+			LEFT JOIN (
+			SELECT tt.id as team_id,tt.team_name,tt.ability,tr.other_id,ac.area_code FROM transport_team tt 
+			LEFT JOIN team_relation tr ON tr.team_id = tt.id 
+			LEFT JOIN area_code ac ON ac.id = tr.other_id
+			WHERE tr.type = 1
+		) temp ON temp.team_id = tr1.team_id 
+		WHERE tr1.type = 3 GROUP BY su.job_num
+	) tp1
+	WHERE tp1.mycode LIKE CONCAT('%',${areaCode},'%')
+	AND tp1.mycode LIKE CONCAT('%',${areaCode1},'%')
+	AND tp1.ability LIKE CONCAT('%',${ability},'%')
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ss_user
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+ 
+  <insert id="insertSelective" parameterType="com.vrv.entity.SSUser" useGeneratedKeys="true" keyProperty="id">
+    insert into ss_user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="jobNum != null" >
+        job_num,
+      </if>
+      <if test="telephone != null" >
+        telephone,
+      </if>
+      <if test="isOpen != null" >
+        is_open,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="ddId != null" >
+        dd_id,
+      </if>
+      <if test="ddUser != null" >
+        dd_user,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="salt != null" >
+        salt,
+      </if>
+      <if test="isTeam != null" >
+        is_team,
+      </if>
+      <if test="userName != null" >
+        user_name,
+      </if>
+      <if test="is_worker != null" >
+          is_worker,
+      </if>
+      <if test="worker_status != null" >
+          worker_status,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="jobNum != null" >
+        #{jobNum,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="isOpen != null" >
+        #{isOpen,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ddId != null" >
+        #{ddId,jdbcType=VARCHAR},
+      </if>
+      <if test="ddUser != null" >
+        #{ddUser,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="isTeam != null" >
+        #{isTeam,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="is_worker != null" >
+        #{is_worker,jdbcType=INTEGER},
+      </if>
+      <if test="worker_status != null" >
+        #{worker_status,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.vrv.entity.SSUser" >
+    update ss_user
+    <set >
+      <if test="jobNum != null" >
+        job_num = #{jobNum,jdbcType=VARCHAR},
+      </if>
+      <if test="telephone != null" >
+        telephone = #{telephone,jdbcType=VARCHAR},
+      </if>
+      <if test="isOpen != null" >
+        is_open = #{isOpen,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="ddId != null" >
+        dd_id = #{ddId,jdbcType=VARCHAR},
+      </if>
+      <if test="ddUser != null" >
+        dd_user = #{ddUser,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="salt != null" >
+        salt = #{salt,jdbcType=VARCHAR},
+      </if>
+      <if test="isTeam != null" >
+        is_team = #{isTeam,jdbcType=INTEGER},
+      </if>
+      <if test="userName != null" >
+        user_name = #{userName,jdbcType=VARCHAR},
+      </if>
+      <if test="is_worker != null" >
+          is_worker = #{is_worker,jdbcType=INTEGER},
+      </if>
+      <if test="worker_status != null" >
+          worker_status = #{worker_status,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+    <select id="findTeamUserNew" resultMap="BaseResultMap" parameterType="java.lang.String">
+        SELECT * from (
+        SELECT su.job_num,su.telephone,su.dd_id,su.is_team,
+        temp.team_id,temp.team_name,temp.ability,GROUP_CONCAT(temp.area_code) as mycode
+        FROM ss_user su
+        LEFT JOIN team_relation tr1 ON tr1.other_id = su.id
+        LEFT JOIN (
+        SELECT tt.id as team_id,tt.team_name,tt.ability,tr.other_id,ac.area_code FROM transport_team tt
+        LEFT JOIN team_relation tr ON tr.team_id = tt.id
+        LEFT JOIN area_code ac ON ac.id = tr.other_id
+        WHERE tr.type = 1
+        ) temp ON temp.team_id = tr1.team_id
+        WHERE tr1.type = 3 GROUP BY su.job_num
+        ) tp1
+        WHERE 1=1
+        <if test="areaCode != null and '' != areaCode">
+            AND tp1.mycode LIKE CONCAT('%',${areaCode},'%')
+        </if>
+        <if test="areaCode1 != null and '' != areaCode1">
+            AND tp1.mycode LIKE CONCAT('%',${areaCode1},'%')
+        </if>
+        <if test="ability != null or 0 == ability">
+            AND tp1.ability LIKE CONCAT('%',${ability},'%')
+        </if>
+
+
+
+    </select>
+</mapper>

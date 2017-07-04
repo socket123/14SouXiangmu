@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vrv.mapper.CarryoutTypeMapper" >
+  <resultMap id="BaseResultMap" type="com.vrv.entity.CarryoutType" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="parentid" property="parentid" jdbcType="VARCHAR" />
+    <result column="parent_name" property="parentName" jdbcType="VARCHAR" />
+    <result column="creat_time" property="creatTime" jdbcType="TIMESTAMP" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="pid" property="pid" jdbcType="INTEGER" />
+    <result column="pname" property="pname" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, name, parentid, parent_name, creat_time, remark, pid
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from carryout_type
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from carryout_type
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.vrv.entity.CarryoutType" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into carryout_type (name, parentid,
+      parent_name, creat_time, remark, pid)
+    values (#{name,jdbcType=VARCHAR}, #{parentid,jdbcType=VARCHAR},
+      #{parentName,jdbcType=VARCHAR}, #{creatTime,jdbcType=TIMESTAMP}, #{remark,jdbcType=VARCHAR}, #{pid,jdbcType=INTEGER})
+  </insert>
+  <insert id="insertSelective" parameterType="com.vrv.entity.CarryoutType" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into carryout_type
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="parentid != null" >
+        parentid,
+      </if>
+      <if test="parentName != null" >
+        parent_name,
+      </if>
+      <if test="creatTime != null" >
+        creat_time,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="pid != null" >
+        pid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null" >
+        #{parentid,jdbcType=VARCHAR},
+      </if>
+      <if test="parentName != null" >
+        #{parentName,jdbcType=VARCHAR},
+      </if>
+      <if test="creatTime != null" >
+        #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        #{pid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.vrv.entity.CarryoutType" >
+    update carryout_type
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="parentid != null" >
+        parentid = #{parentid,jdbcType=VARCHAR},
+      </if>
+      <if test="parentName != null" >
+        parent_name = #{parentName,jdbcType=VARCHAR},
+      </if>
+      <if test="creatTime != null" >
+        creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="pid != null" >
+        pid = #{pid,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.vrv.entity.CarryoutType" >
+    update carryout_type
+    set name = #{name,jdbcType=VARCHAR},
+      parentid = #{parentid,jdbcType=VARCHAR},
+      parent_name = #{parentName,jdbcType=VARCHAR},
+      creat_time = #{creatTime,jdbcType=TIMESTAMP},
+      remark = #{remark,jdbcType=VARCHAR},
+      pid = #{pid,jdbcType=INTEGER}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="getList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select A.*
+     ,B.name as pname
+    from carryout_type A
+     LEFT JOIN carryout_type B ON B.id = A.pid
+    where 1=1
+    <if test="name != null and '' != name">
+      AND A.name like CONCAT('%','${name}','%' )
+    </if>
+    limit #{offset},#{size}
+  </select>
+
+  <select id="getTotalCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+    SELECT count(*) FROM carryout_type where 1=1
+    <if test="name != null and '' != name">
+      AND name like CONCAT('%','${name}','%' )
+    </if>
+  </select>
+  <select id="loadAll" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select * from carryout_type where 1=1
+  </select>
+
+  <select id="findCarryoutTypeByPid" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select * from carryout_type where pid = #{pid}
+  </select>
+  <select id="countCarryoutTypeByName" parameterType="java.lang.String" resultType="java.lang.Integer">
+    select count(*) from carryout_type where name = #{name}
+  </select>
+
+</mapper>

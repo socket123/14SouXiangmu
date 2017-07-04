@@ -1,0 +1,460 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.vrv.mapper.OrderMapper">
+	<select id="findOrderByPage" parameterType="com.vrv.entity.Order" resultType="com.vrv.entity.Order">
+		SELECT * FROM ss_order WHERE status=#{status}
+		<if test="send_position != null and '' != send_position">
+			AND  send_position = #{send_position}
+		</if>
+		<if test="send_user_id != null and '' != send_user_id">
+				AND send_user_id=#{send_user_id}
+		</if>
+		<if test="recip_user_id != null and '' != recip_user_id">
+				AND recip_user_id=#{recip_user_id}
+			</if>
+		  ORDER BY create_time DESC limit #{startIndex},#{endIndex}
+	</select>
+
+	<select id="findOrderBypage" parameterType="com.vrv.entity.Order"
+		resultType="com.vrv.entity.Order">
+		SELECT * FROM ss_order WHERE (status=2 or status=1)
+		<if test="send_position != null and '' != send_position">
+		AND  send_position = #{send_position}
+		</if>
+		<if test="recip_user_id != null and '' != recip_user_id">
+				AND recip_user_id=#{recip_user_id}
+			</if>
+		  ORDER BY create_time DESC limit #{startIndex},#{endIndex}
+	</select>
+
+	<select id="selectByPrimaryKey" parameterType="java.lang.Integer"
+		resultType="com.vrv.entity.Order">
+		SELECT so.*,su.user_name as send_username ,sur.user_name as recip_username FROM ss_order so
+		 left join ss_user su on su.id = so.send_user_id
+		 left join ss_user sur on sur.id = so.recip_user_id
+		WHERE so.id=#{id}
+	</select>
+	
+	<select id="selectBySerialNo" parameterType="java.lang.String"
+		resultType="com.vrv.entity.Order">
+		SELECT * FROM ss_order 
+		WHERE waybill_number=#{waybill_number} limit 1
+	</select>
+	
+	<select id="getByPrimaryKey" parameterType="java.lang.Integer" resultType="com.vrv.entity.Order">
+		SELECT so.*, tu.*,sus.user_name as send_username ,sur.user_name as recip_username FROM ss_order so
+		LEFT JOIN (
+			SELECT tt.id tid,tt.team_name,GROUP_CONCAT(su.job_num) deliver_job_num,GROUP_CONCAT(su.telephone) deliver_telephone from transport_team tt 
+			INNER JOIN team_relation tr ON tt.id = tr.team_id 
+			INNER JOIN ss_user su ON tr.other_id = su.id 
+			WHERE tr.type = 3 
+			GROUP BY tt.id
+		) tu ON tu.tid = so.team_id
+		 left join ss_user sus on sus.id = so.send_user_id
+		 left join ss_user sur on sur.id = so.recip_user_id
+		WHERE so.id = #{id}
+	</select>
+	
+	<select id="getList" parameterType="java.util.Map"
+		resultType="com.vrv.entity.Order">
+		SELECT * FROM 
+		    (SELECT so.*,su.job_num as jobNumOne,ssu.job_num as jobNumTwo,ssu.telephone,tt.team_name FROM ss_order so 
+		                   left join ss_user su
+		                   on so.send_user_id= su.id 
+		                   left join ss_user ssu
+		                   on so.recip_user_id= ssu.id
+		                   left join transport_team tt
+		                   on tt.id=so.team_id
+		      WHERE 1=1
+		    <if test="waybill_number != null and '' != waybill_number">
+				AND so.waybill_number  like CONCAT('%','${waybill_number}','%' )  
+			</if>
+			<if test="jobNumOne != null and '' != jobNumOne">
+				AND su.job_num like CONCAT('%','${jobNumOne}','%' )  
+			</if>
+			<if test="jobNumTwo != null and '' != jobNumTwo">
+				AND ssu.job_num  like CONCAT('%','${jobNumTwo}','%' )
+			</if>
+			<if test="status != null and '' != status">
+				AND so.status=#{status}
+			</if>
+			<if test="startTime != null and '' != startTime">
+				<![CDATA[
+					 AND  DATE_FORMAT(so.create_time, '%Y~%m~%d' ) >= DATE_FORMAT(#{startTime}, '%Y~%m~%d' )
+				]]>
+			</if>
+			<if test="endTime != null and '' != endTime">
+				<![CDATA[
+					 AND  DATE_FORMAT(so.create_time, '%Y~%m~%d' ) <= DATE_FORMAT(#{endTime}, '%Y~%m~%d' )
+				]]>
+			</if>
+			<if test="recipStartTime != null and '' != recipStartTime">
+				<![CDATA[
+					 AND  DATE_FORMAT(so.recip_time, '%Y~%m~%d' ) >= DATE_FORMAT(#{recipStartTime}, '%Y~%m~%d' )
+				]]>
+			</if>
+			<if test="recipEndTime != null and '' != recipEndTime">
+				<![CDATA[
+					 AND  DATE_FORMAT(so.recip_time, '%Y~%m~%d' ) <= DATE_FORMAT(#{recipEndTime}, '%Y~%m~%d' )
+				]]>
+			</if>
+		    ) a  order by a.create_time desc limit #{offset},#{size}
+	</select>
+	
+	
+	<select id="findOrderList" parameterType="com.vrv.entity.Order"
+		resultType="com.vrv.entity.Order">
+		 SELECT * FROM 
+		    (SELECT so.*,su.job_num as jobNumOne,ssu.job_num as jobNumTwo,ssu.telephone,tt.team_name FROM ss_order so 
+		                   left join ss_user su
+		                   on so.send_user_id= su.id 
+		                   left join ss_user ssu
+		                   on so.recip_user_id= ssu.id
+		                   left join transport_team tt
+		                   on tt.id=so.team_id
+		      WHERE 1=1
+		    <if test="waybill_number != null and '' != waybill_number">
+				AND so.waybill_number  like CONCAT('%','${waybill_number}','%' )  
+			</if>
+			<if test="jobNumOne != null and '' != jobNumOne">
+				AND su.job_num like CONCAT('%','${jobNumOne}','%' )  
+			</if>
+			<if test="jobNumTwo != null and '' != jobNumTwo">
+				AND ssu.job_num  like CONCAT('%','${jobNumTwo}','%' )
+			</if>
+			<if test="status != null and '' != status">
+				AND so.status=#{status}
+			</if>
+			<if test="startTime != null and '' != startTime">
+				<![CDATA[
+					 AND  DATE_FORMAT(so.create_time, '%Y~%m~%d' ) >= DATE_FORMAT(#{startTime}, '%Y~%m~%d' )
+				]]>
+			</if>
+			<if test="endTime != null and '' != endTime">
+				<![CDATA[
+					 AND  DATE_FORMAT(so.create_time, '%Y~%m~%d' ) <= DATE_FORMAT(#{endTime}, '%Y~%m~%d' )
+				]]>
+			</if>
+			<if test="recipStartTime != null and '' != recipStartTime">
+				<![CDATA[
+					 AND  DATE_FORMAT(so.recip_time, '%Y~%m~%d' ) >= DATE_FORMAT(#{recipStartTime}, '%Y~%m~%d' )
+				]]>
+			</if>
+			<if test="recipEndTime != null and '' != recipEndTime">
+				<![CDATA[
+					 AND  DATE_FORMAT(so.recip_time, '%Y~%m~%d' ) <= DATE_FORMAT(#{recipEndTime}, '%Y~%m~%d' )
+				]]>
+			</if>
+		   ) a  order by a.create_time desc 
+	</select>
+
+	
+	<select id="getTotalCount" parameterType="java.util.Map"
+		resultType="java.lang.Integer">
+		SELECT count(*) FROM (SELECT so.*,su.job_num as jobNumOne,ssu.job_num as jobNumTwo,ssu.telephone,tt.team_name FROM ss_order so 
+		                   left join ss_user su
+		                   on so.send_user_id= su.id 
+		                   left join ss_user ssu
+		                   on so.recip_user_id= ssu.id
+		                   left join transport_team tt
+		                   on tt.id=so.team_id
+		      WHERE 1=1
+		    <if test="waybill_number != null and '' != waybill_number">
+				AND so.waybill_number  like CONCAT('%','${waybill_number}','%' )  
+			</if>
+			<if test="jobNumOne != null and '' != jobNumOne">
+				AND su.job_num like CONCAT('%','${jobNumOne}','%' )  
+			</if>
+			<if test="jobNumTwo != null and '' != jobNumTwo">
+				AND ssu.job_num  like CONCAT('%','${jobNumTwo}','%' )
+			</if>
+			<if test="status != null and '' != status">
+				AND so.status=#{status}
+			</if>
+			<if test="startTime != null and '' != startTime">
+				<![CDATA[
+					 AND  DATE_FORMAT(so.create_time, '%Y~%m~%d' ) >= DATE_FORMAT(#{startTime}, '%Y~%m~%d' )
+				]]>
+			</if>
+			<if test="endTime != null and '' != endTime">
+				<![CDATA[
+					 AND  DATE_FORMAT(so.create_time, '%Y~%m~%d' ) <= DATE_FORMAT(#{endTime}, '%Y~%m~%d' )
+				]]>
+			</if>
+			<if test="recipStartTime != null and '' != recipStartTime">
+				<![CDATA[
+					 AND  DATE_FORMAT(so.recip_time, '%Y~%m~%d' ) >= DATE_FORMAT(#{recipStartTime}, '%Y~%m~%d' )
+				]]>
+			</if>
+			<if test="recipEndTime != null and '' != recipEndTime">
+				<![CDATA[
+					 AND  DATE_FORMAT(so.recip_time, '%Y~%m~%d' ) <= DATE_FORMAT(#{recipEndTime}, '%Y~%m~%d' )
+				]]>
+			</if>) a order by a.create_time desc
+	</select>
+	
+	<select id="findOrderDetailById" parameterType="java.lang.Integer"
+		resultType="com.vrv.entity.Order">
+        select  so.*,
+		        aa.team_name as team_name,
+		        GROUP_CONCAT(aa.jobNum,'(',aa.telephone,')') as username
+         from ss_order so
+        left join 
+        (select 
+               tt.id as id,
+               tt.team_name as team_name,
+               su.job_num as jobNum,
+               su.telephone as telephone
+           from   transport_team  tt 
+           LEFT JOIN   team_relation tr
+           ON tr.team_id =tt.id
+           LEFT JOIN ss_user su
+           ON  tr.other_id=su.id
+		   where  tr.type=3 ) aa
+        on so.team_id=aa.id
+        where so.id=#{id}
+	</select>
+	
+	<insert id="addOrder" parameterType="com.vrv.entity.Order" useGeneratedKeys="true" keyProperty="id">
+		INSERT INTO
+		ss_order
+		(
+		send_user_id,
+		send_user,
+		send_phone,
+		send_position,
+		create_time,
+		remark,
+		recip_user_id,
+		recip_user,
+		recip_phone,
+		recip_position,
+		remarkTwo,
+		recip_time,
+		team_id,
+		waybill_number,
+		is_big,
+		is_urgent,
+		status,
+		source,
+		branchsend_id
+		)VALUES
+		(
+		#{send_user_id},
+		#{send_user},
+		#{send_phone},
+		#{send_position},
+		#{create_time},
+		#{remark},
+		#{recip_user_id},
+		#{recip_user},
+		#{recip_phone},
+		#{recip_position},
+		#{remarkTwo},
+		#{recip_time},
+		#{team_id},
+		#{waybill_number},
+		#{is_big},
+		#{is_urgent},
+		#{status},
+		#{source},
+		#{team_id}
+		)
+	</insert>
+	
+	<update id="updateByPrimaryKeySelective" parameterType="com.vrv.entity.Order" >
+    update ss_order
+    <set >
+      <if test="send_user_id != null" >
+        send_user_id = #{send_user_id,jdbcType=INTEGER},
+      </if>
+      <if test="send_user != null" >
+        send_user = #{send_user,jdbcType=VARCHAR},
+      </if>
+      <if test="send_phone != null" >
+        send_phone = #{send_phone,jdbcType=VARCHAR},
+      </if>
+      <if test="send_position != null" >
+        send_position = #{send_position,jdbcType=VARCHAR},
+      </if>
+      <if test="create_time != null" >
+        create_time = #{create_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="recip_user_id != null" >
+        recip_user_id = #{recip_user_id,jdbcType=INTEGER},
+      </if>
+      <if test="recip_user != null" >
+        recip_user = #{recip_user,jdbcType=VARCHAR},
+      </if>
+      <if test="recip_phone != null" >
+        recip_phone = #{recip_phone,jdbcType=VARCHAR},
+      </if>
+      <if test="recip_position != null" >
+        recip_position = #{recip_position,jdbcType=VARCHAR},
+      </if>
+      <if test="recip_time != null" >
+        recip_time = #{recip_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="delivery_time != null" >
+        delivery_time = #{delivery_time,jdbcType=TIMESTAMP},
+      </if>
+      <if test="team_id != null" >
+        team_id = #{team_id,jdbcType=INTEGER},
+      </if>
+      <if test="waybill_number != null" >
+        waybill_number = #{waybill_number,jdbcType=VARCHAR},
+      </if>
+      <if test="is_big != null" >
+        is_big = #{is_big,jdbcType=INTEGER},
+      </if>
+      <if test="is_urgent != null" >
+        is_urgent = #{is_urgent,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="remarkTwo != null" >
+        remarkTwo = #{remarkTwo,jdbcType=VARCHAR},
+      </if>
+      <if test="source != null" >
+        source = #{source,jdbcType=VARCHAR},
+      </if>
+      <if test="unloading_time != null" >
+        unloading_time = #{unloading_time,jdbcType=TIMESTAMP},
+      </if>
+		<if test="firstpoint_time != null" >
+			firstpoint_time = #{firstpoint_time,jdbcType=TIMESTAMP},
+		</if>
+		<if test="trunkdelivery_time != null" >
+			trunkdelivery_time = #{trunkdelivery_time,jdbcType=VARCHAR},
+		</if>
+		<if test="branchpoint_time != null" >
+			branchpoint_time = #{branchpoint_time,jdbcType=VARCHAR},
+		</if>
+		<if test="branchdelivery_time != null" >
+			branchdelivery_time = #{branchdelivery_time,jdbcType=TIMESTAMP},
+		</if>
+		<if test="trunk_id != null" >
+			trunk_id = #{trunk_id,jdbcType=VARCHAR},
+		</if>
+		<if test="branchsend_id != null" >
+			branchsend_id = #{branchsend_id,jdbcType=INTEGER},
+		</if>
+		<if test="branchrecip_id != null" >
+			branchrecip_id = #{branchrecip_id,jdbcType=INTEGER},
+		</if>
+		<if test="carryout_code != null" >
+			carryout_code = #{carryout_code,jdbcType=VARCHAR},
+		</if>
+		<if test="send_courier != null" >
+			send_courier = #{send_courier,jdbcType=INTEGER},
+		</if>
+		<if test="recip_courier != null" >
+			recip_courier = #{recip_courier,jdbcType=INTEGER},
+		</if>
+
+		<if test="if_evalute_send != null" >
+			if_evalute_send = #{if_evalute_send,jdbcType=INTEGER},
+		</if>
+		<if test="if_evalute_recip != null" >
+			if_evalute_recip = #{if_evalute_recip,jdbcType=INTEGER},
+		</if>
+		<if test="trunk_courier != null" >
+			trunk_courier = #{trunk_courier,jdbcType=INTEGER},
+		</if>
+		<if test="if_band_carryout != null" >
+			if_band_carryout = #{if_band_carryout,jdbcType=INTEGER},
+		</if>
+
+
+		<if test="trunk_worker_id != null" >
+			trunk_worker_id = #{trunk_worker_id,jdbcType=VARCHAR},
+		</if>
+		<if test="branchsend_worker_id != null" >
+			branchsend_worker_id = #{branchsend_worker_id,jdbcType=VARCHAR},
+		</if>
+		<if test="branchrecip_worker_id != null" >
+			branchrecip_worker_id = #{branchrecip_worker_id,jdbcType=VARCHAR},
+		</if>
+		<if test="trunk_worker_count != null" >
+			trunk_worker_count = #{trunk_worker_count,jdbcType=VARCHAR},
+		</if>
+		<if test="branchsend_worker_count != null" >
+			branchsend_worker_count = #{branchsend_worker_count,jdbcType=VARCHAR},
+		</if>
+		<if test="branchrecip_worker_count != null" >
+			branchrecip_worker_count = #{branchrecip_worker_count,jdbcType=VARCHAR},
+		</if>
+
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+	
+	<update id="updateOrderStatusById" parameterType="com.vrv.entity.Order">
+	    UPDATE ss_order SET status=#{status} WHERE id=#{id}
+	</update>
+	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from ss_order
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+	<update id="updateOrderByNum" parameterType="com.vrv.entity.Order">
+	    UPDATE ss_order SET status=3 WHERE waybill_number=#{waybill_number}
+	</update>
+  
+
+	<select id="findMapOrders" resultType="com.vrv.entity.Order">
+		SELECT * from ss_order 
+		<where>
+			<if test="statusRemark != null and statusRemark != ''">
+				and ${statusRemark} 
+			</if>
+			<if test="position != null and position != ''">
+				and ${position} 
+			</if>
+		</where>
+		ORDER BY create_time DESC,waybill_number asc
+	</select>
+	
+	<update id="accpetThisOrder" parameterType="com.vrv.entity.Order">
+		UPDATE ss_order SET status=2,team_id=#{team_id},delivery_time=#{delivery_time} WHERE id=#{id}
+	</update>
+	
+	<update id="removeRequestOrder" parameterType="com.vrv.entity.Order">
+		UPDATE ss_order SET status=#{status}
+		<if test="recip_time!=null and '' != recip_time">
+		,recip_time=#{recip_time}
+		</if>
+		 WHERE id=#{id}
+	</update>
+	
+	<select id="findOrdersByuIdAndStatus" parameterType="java.lang.Integer"
+		resultType="com.vrv.entity.Order">
+		select * from ss_order where recip_user_id=#{recip_user_id} AND status=#{status}
+	</select>
+	
+	<select id="findOrdersByuIdAndSStatus" parameterType="java.lang.Integer"
+		resultType="com.vrv.entity.Order">
+		select * from ss_order where recip_user_id=#{recip_user_id} AND (status=1 OR status=2)
+	</select>
+
+	<select id="findOrderAnalysis"  parameterType="java.lang.String" resultType="com.vrv.entity.Order">
+		select area_code as send_position,IFNULL(workload,0) as workload from area_code left join (
+			select sum(workload) as workload,position from (
+				select count(id) as workload,send_position as position from ss_order where status>1 and status!=4 <![CDATA[
+					 AND  DATE_FORMAT(delivery_time, '%Y~%m~%d' ) = DATE_FORMAT(#{startTime}, '%Y~%m~%d' )
+				]]> group by send_position
+		 			union ALL
+		 		select count(id) as workload,recip_position as position from ss_order where (status=9 OR status=3 OR status=5) and status!=4 <![CDATA[
+					 AND  DATE_FORMAT(recip_time, '%Y~%m~%d' ) = DATE_FORMAT(#{startTime}, '%Y~%m~%d' )
+				]]> group by recip_position
+		 	  ) a group by position
+		 	) b
+		 on area_code = position
+	</select>
+</mapper>

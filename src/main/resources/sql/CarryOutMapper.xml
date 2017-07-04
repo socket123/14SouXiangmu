@@ -1,0 +1,340 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vrv.mapper.CarryOutMapper" >
+  <resultMap id="BaseResultMap" type="com.vrv.entity.CarryOut" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="carryout_code" property="carryoutCode" jdbcType="VARCHAR" />
+    <result column="is_enable" property="isEnable" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="user_id" property="userId" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="position" property="position" jdbcType="VARCHAR" />
+    <result column="team_id" property="teamId" jdbcType="INTEGER" />
+    <result column="depict" property="depict" jdbcType="VARCHAR" />
+    <result column="figurenum" property="figurenum" jdbcType="VARCHAR" />
+    <result column="carryout_type" property="carryoutType" jdbcType="VARCHAR" />
+    <result column="carryout_typename" property="carryoutTypename" jdbcType="VARCHAR" />
+    <result column="remark" property="remark" jdbcType="VARCHAR" />
+    <result column="retain2" property="retain2" jdbcType="VARCHAR" />
+    <result column="retain3" property="retain3" jdbcType="VARCHAR" />
+    <result column="retain4" property="retain4" jdbcType="VARCHAR" />
+    <result column="retain5" property="retain5" jdbcType="VARCHAR" />
+    <result column="carryout_typeid" property="carryoutTypeid" jdbcType="INTEGER" />
+    <result column="carryout_deptid" property="carryoutDeptid" jdbcType="INTEGER" />
+    <result column="carryout_stateid" property="carryoutStateid" jdbcType="INTEGER" />
+    <result column="carryoutDeptName" property="carryoutDeptName" jdbcType="VARCHAR" />
+    <result column="carryoutStateName" property="carryoutStateName" jdbcType="VARCHAR" />
+    <result column="last_time" property="lastTime" jdbcType="TIMESTAMP" />
+    <result column="teamName" property="teamName" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, carryout_code, is_enable, create_time, user_id, status, position, team_id, depict, figurenum, carryout_type, remark, retain2, retain3, retain4, retain5, carryout_typename, carryout_typeid,carryout_deptid,carryout_stateid, last_time
+  </sql>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from carry_out
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from carry_out
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.vrv.entity.CarryOut" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into carry_out (carryout_code, is_enable,
+      create_time, user_id, status, 
+      position, team_id, depict, figurenum, carryout_type,
+      remark, retain2, retain3, retain4, retain5, carryout_typename, carryout_typeid,carryout_deptid,carryout_stateid, last_time)
+    values (#{carryoutCode,jdbcType=VARCHAR}, #{isEnable,jdbcType=INTEGER},
+      #{createTime,jdbcType=TIMESTAMP}, #{userId,jdbcType=VARCHAR}, #{status,jdbcType=INTEGER}, 
+      #{position,jdbcType=VARCHAR}, #{teamId,jdbcType=INTEGER}, #{depict,jdbcType=VARCHAR},
+      #{figurenum,jdbcType=VARCHAR}, #{carryoutType,jdbcType=VARCHAR}, #{remark,jdbcType=VARCHAR}, #{retain2,jdbcType=VARCHAR},
+    #{retain3,jdbcType=VARCHAR}, #{retain4,jdbcType=VARCHAR}, #{retain5,jdbcType=VARCHAR}
+    , #{carryoutTypename,jdbcType=VARCHAR}, #{carryoutTypeid,jdbcType=INTEGER}, #{carryoutDeptid,jdbcType=INTEGER}, #{carryoutStateid,jdbcType=INTEGER}, #{lastTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.vrv.entity.CarryOut" >
+    <selectKey resultType="java.lang.Integer" keyProperty="id" order="BEFORE" >
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    insert into carry_out
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="carryoutCode != null" >
+        carryout_code,
+      </if>
+      <if test="isEnable != null" >
+        is_enable,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="position != null" >
+        position,
+      </if>
+      <if test="teamId != null" >
+        team_id,
+      </if>
+      <if test="depict != null" >
+        depict,
+      </if>
+      <if test="figurenum != null" >
+        figurenum,
+      </if>
+      <if test="carryoutType != null" >
+        carryout_type,
+      </if>
+      <if test="remark != null" >
+        remark,
+      </if>
+      <if test="retain2 != null" >
+        retain2,
+      </if>
+      <if test="retain3 != null" >
+        retain3,
+      </if>
+      <if test="retain4 != null" >
+        retain4,
+      </if>
+      <if test="retain5 != null" >
+        retain5,
+      </if>
+      <if test="carryoutTypename != null" >
+        carryout_typename,
+      </if>
+      <if test="carryoutTypeid != null" >
+        carryoutTypeid,
+      </if>
+      <if test="carryoutDeptid != null" >
+        carryoutDeptid,
+      </if>
+      <if test="carryoutStateid != null" >
+        carryoutStateid,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="carryoutCode != null" >
+        #{carryoutCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnable != null" >
+        #{isEnable,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="position != null" >
+        #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="teamId != null" >
+        #{teamId,jdbcType=INTEGER},
+      </if>
+      <if test="depict != null" >
+        #{depict,jdbcType=VARCHAR},
+      </if>
+      <if test="figurenum != null" >
+        #{figurenum,jdbcType=VARCHAR},
+      </if>
+      <if test="carryoutType != null" >
+        #{carryoutType,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="retain2 != null" >
+        #{retain2,jdbcType=VARCHAR},
+      </if>
+      <if test="retain3 != null" >
+        #{retain3,jdbcType=VARCHAR},
+      </if>
+      <if test="retain4 != null" >
+        #{retain4,jdbcType=VARCHAR},
+      </if>
+      <if test="retain5 != null" >
+        #{retain5,jdbcType=VARCHAR},
+      </if>
+      <if test="carryoutTypename != null" >
+        #{carryoutTypename,jdbcType=VARCHAR},
+      </if>
+      <if test="carryoutTypeid != null" >
+        #{carryoutTypeid,jdbcType=INTEGER},
+      </if>
+      <if test="carryoutDeptid != null" >
+        #{carryoutDeptid,jdbcType=INTEGER},
+      </if>
+      <if test="carryoutStateid != null" >
+        #{carryoutStateid,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.vrv.entity.CarryOut" >
+    update carry_out
+    <set >
+      <if test="carryoutCode != null" >
+        carryout_code = #{carryoutCode,jdbcType=VARCHAR},
+      </if>
+      <if test="isEnable != null" >
+        is_enable = #{isEnable,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="position != null" >
+        position = #{position,jdbcType=VARCHAR},
+      </if>
+      <if test="teamId != null" >
+        team_id = #{teamId,jdbcType=INTEGER},
+      </if>
+      <if test="depict != null" >
+        depict = #{depict,jdbcType=VARCHAR},
+      </if>
+      <if test="figurenum != null" >
+        figurenum = #{figurenum,jdbcType=VARCHAR},
+      </if>
+      <if test="carryoutType != null" >
+        carryout_type = #{carryoutType,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null" >
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="retain2 != null" >
+        retain2 = #{retain2,jdbcType=VARCHAR},
+      </if>
+      <if test="retain3 != null" >
+        retain3 = #{retain3,jdbcType=VARCHAR},
+      </if>
+      <if test="retain4 != null" >
+        retain4 = #{retain4,jdbcType=VARCHAR},
+      </if>
+      <if test="retain5 != null" >
+        retain5 = #{retain5,jdbcType=VARCHAR},
+      </if>
+      <if test="carryoutTypename != null" >
+        carryout_typename = #{carryoutTypename,jdbcType=VARCHAR},
+      </if>
+      <if test="carryoutTypeid != null" >
+        carryout_typeid = #{carryoutTypeid,jdbcType=INTEGER},
+      </if>
+      <if test="carryoutDeptid != null" >
+        carryout_deptid = #{carryoutDeptid,jdbcType=INTEGER},
+      </if>
+      <if test="carryoutStateid != null" >
+        carryout_stateid = #{carryoutStateid,jdbcType=INTEGER},
+      </if>
+      <if test="lastTime != null" >
+        last_time = #{lastTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.vrv.entity.CarryOut" >
+    update carry_out
+    set carryout_code = #{carryoutCode,jdbcType=VARCHAR},
+      is_enable = #{isEnable,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      user_id = #{userId,jdbcType=VARCHAR},
+      status = #{status,jdbcType=INTEGER},
+      position = #{position,jdbcType=VARCHAR},
+      team_id = #{teamId,jdbcType=INTEGER},
+      depict = #{depict,jdbcType=VARCHAR},
+      figurenum = #{figurenum,jdbcType=VARCHAR},
+      carryout_type = #{carryoutType,jdbcType=VARCHAR},
+      remark = #{remark,jdbcType=VARCHAR},
+      retain2 = #{retain2,jdbcType=VARCHAR},
+      retain3 = #{retain3,jdbcType=VARCHAR},
+      retain4 = #{retain4,jdbcType=VARCHAR},
+      retain5 = #{retain5,jdbcType=VARCHAR},
+      carryout_typename = #{carryoutTypename,jdbcType=VARCHAR},
+      carryout_typeid = #{carryoutTypeid,jdbcType=INTEGER},
+      carryout_deptid = #{carryoutDeptid,jdbcType=INTEGER},
+      carryout_stateid = #{carryoutStateid,jdbcType=INTEGER},
+      last_time = #{lastTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <select id="getList" parameterType="java.util.Map" resultMap="BaseResultMap">
+    select a.*,b.name as pname,c.dept_name as carryoutDeptName,d.name as carryoutStateName, t.team_name as teamName from carry_out a
+    LEFT JOIN carryout_type b on b.id = a.carryout_typeid
+    LEFT JOIN carryout_dept c on c.id = a.carryout_deptid
+    LEFT JOIN carryout_state d on d.id = a.carryout_stateid
+    LEFT JOIN transport_team t on t.id = a.team_id
+    where 1=1
+    <if test="teamId != null and '' != teamId">
+      AND a.team_id like CONCAT('%','${teamId}','%' ) AND status=1
+    </if>
+    <if test="position != null and '' != position">
+      AND a.position=#{position} AND status!=1
+    </if>
+    limit #{offset},#{size}
+  </select>
+
+  <select id="getTotalCount" parameterType="java.util.Map" resultType="java.lang.Integer">
+    SELECT count(*) FROM carry_out where 1=1
+    <if test="teamId != null and '' != teamId">
+      AND team_id like CONCAT('%','${teamId}','%' )
+    </if>
+    <if test="status != null and '' != status">
+      AND status=#{status}
+    </if>
+  </select>
+
+  <select id="findByCarryoutCode"  parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT * FROM carry_out
+    WHERE carryout_code=#{carryoutCode}
+    limit 1
+  </select>
+  <update id="updateBycode" parameterType="com.vrv.entity.CarryOut" >
+    update carry_out
+    set status = #{status,jdbcType=INTEGER},
+    team_id = #{teamId,jdbcType=INTEGER}
+    where carryout_code = #{carryoutCode,jdbcType=VARCHAR}
+  </update>
+  <select id="findCarryoutByCarryoutTypeid"  parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT * FROM carry_out
+    WHERE carryout_typeid=#{carryoutTypeid}
+  </select>
+  <select id="findCarryoutByCarryoutDeptid"  parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT * FROM carry_out
+    WHERE carryout_deptid=#{carryoutDeptid}
+  </select>
+  <select id="findCarryoutByCarryoutStateid"  parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    SELECT * FROM carry_out
+    WHERE carryout_stateid=#{carryoutStateid}
+  </select>
+
+  <select id="findCarryoutList" parameterType="com.vrv.entity.CarryOut" resultMap="BaseResultMap">
+    select a.*,b.name as pname,c.dept_name as carryoutDeptName,d.name as carryoutStateName, t.team_name as teamName from carry_out a
+    LEFT JOIN carryout_type b on b.id = a.carryout_typeid
+    LEFT JOIN carryout_dept c on c.id = a.carryout_deptid
+    LEFT JOIN carryout_state d on d.id = a.carryout_stateid
+    LEFT JOIN transport_team t on t.id = a.team_id
+    where 1=1
+    <if test="teamId != null and '' != teamId">
+      AND a.team_id like CONCAT('%','${teamId}','%' ) AND status=1
+    </if>
+    <if test="position != null and '' != position">
+      AND a.position=#{position} AND status!=1
+    </if>
+    order by carryout_code
+  </select>
+
+
+</mapper>

@@ -1,0 +1,675 @@
+/*
+ *这是单独为hello mui准备的个性化css，可以覆盖标准mui的css定义；
+ * 在实际项目开发时，建议为App单独写一个css文件，从而实现项目的自定义皮肤功能；
+ * 
+ * */
+ *{
+ 	font-family: "微软雅黑";
+ 	font-size: 16px;
+ }
+.mui-plus.mui-android header.mui-bar{
+	display: none;
+}
+.mui-plus.mui-android .mui-bar-nav~.mui-content{
+	padding: 0;
+}
+.clearfix{
+	clear: both;
+
+}
+.clearfix:before,
+.clearfix:after{
+  display: table;
+  content: " ";
+  clear: both;
+}
+.in_block{
+	display: inline-block;
+}
+/*导航*/
+.mui-bar{
+	background: #00a0ea;
+}
+.mui-bar h1{
+	
+	letter-spacing: 1px;
+}
+.mui-bar .mui-title,.mui-bar .mui-icon,.mui-bar .mui-action-back{
+	color: #fff;
+	letter-spacing: 2px;
+}
+.mui-grid-view.mui-grid-9 .mui-media .fa {
+	font-size: 3.1em;
+	position: relative;
+}
+.fa .mui-badge {
+    font-size: 10px;
+    line-height: 1.4;
+    position: absolute;
+    top: -2px;
+    left: 100%;
+    margin-left: -10px;
+    padding: 1px 5px;
+    color: #fff;
+    background: red;
+}
+.mui-grid-view.mui-grid-9 {
+
+    background-color: #ffffff;
+}
+.color1{
+	color: #8b97c9 !important;
+}
+.color2{
+	color: #7ec36a!important
+}
+.color3{
+	color: #00b8ee!important
+}
+.mui-padd-10{
+	padding: 1em 1.2rem;
+	background-color: #ffffff;
+}
+.mui-padd-10 p{
+	letter-spacing: 1px;
+}
+.mui-padd-5{
+	padding: 0 15px;
+}
+.font_16{
+	font-size: 16px;
+	margin-bottom: .8rem;
+}
+/*底部*/
+.footer{
+	width: 100%;
+	position: fixed;
+	bottom: 1em;
+}
+/*订单详情*/
+.orders .mui-content{
+	background: #fff;
+	/*font-family: "微软雅黑";*/
+}
+.mui-table-view-cell{
+	list-style: none;
+}
+.orders .mui-content .mui-table-view-cell span{
+	height: 32px;
+	line-height: 32px;
+
+}
+.orders .mui-content .mui-table-view-cell input[type="text"]{
+	width: 95%;
+	height: 30px;
+	margin: 0;
+	border: 1px solid #9da6d1;
+}
+.orders .mui-content .mui-table-view-cell input[type="radio"]:before{
+	font-size: 25px;
+}
+.sys{
+	background: url(../images/sys.png) no-repeat;
+	background-size: 100%;
+	background-position: 0 45%;
+}
+.orders .mui-grid-view.mui-grid-9 {
+   
+    border: none;
+}
+.orders .mui-grid-view.mui-grid-9 .mui-table-view-cell{
+	padding: 0;
+	text-align: left;
+}
+.orders .mui-grid-view.mui-grid-9 .mui-table-view-cell .fa{
+	font-size: 16px;
+	height: 18px;
+	line-height: 20px;
+	text-align: center;
+	width: 100%;
+	color: #000;
+}
+.orders .mui-grid-view.mui-grid-9 .mui-table-view-cell input[type="text"]{
+	height: 20px;
+	border: none;
+	border-bottom: 1px solid #b1bef2;
+	background: transparent;
+	border-radius: none;
+	padding: 0 15px;
+	margin-bottom: 0px;
+}
+/*订单列表*/
+.mui-segmented-control.mui-segmented-control-inverted .mui-control-item.mui-active {
+    color: #555d8b;
+    border-bottom: 0;
+    font-weight: bold;
+    background: 0 0;
+}
+ .mui-btn-royal {
+ 	display: inline-block;
+    color: #fff;
+    border: 1px solid #00a0e9;
+    background-color: #00a0e9;
+    padding: 6px 12px;
+    margin: 0 auto;
+}
+.mui-content select{
+	width: 95%;
+	margin: 0;
+	height: 31px;
+	padding: 0 15px;
+	border: 1px solid #9da6d1 !important;
+	background: url(../images/down.png) no-repeat;
+	background-position: 99% 50%;
+	color: #aaa;
+}
+.mui-slider-handle .mui-table-cell{
+	width: 100%;
+	display: block;
+}
+ .order_title{
+	font-size: .8rem;
+	color: #898989;
+}
+.mui-slider-handle .mui-table-cell .order_num{
+	color: #000;
+	font-weight: 400;
+	font-size: 16px;
+	padding-left: 10px;
+	letter-spacing: 1px;
+	 overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+	
+}
+.mui-slider-handle .mui-table-cell .order_time,.mui-slider-handle .mui-table-cell .order_location{
+	color: #898989;
+	font-size: .7rem;
+	letter-spacing: 1px;
+	white-space: nowrap;
+}
+.mui-slider-handle .mui-table-cell .order_time.sys{
+	background-size: 40% !important;
+	-webkit-transform: scale(1.2) translate3D(10px,10px,0);
+	-ms-transform: scale(1.2) translate3D(10px,10px,0);
+	-o-transform: scale(1.2) translate3D(10px,10px,0);
+	transform: scale(1.2) translate3D(10px,10px,0);
+}
+.mui-slider-handle .mui-table-cell .order_message{
+	padding-left: 10px;
+	font-size: 16px;
+	color: #1e90da;
+	letter-spacing: 1px;
+}
+.boottom_btn{
+	position: fixed;
+	bottom: 0rem;
+	width: 100%;
+	text-align: center;
+}
+.boottom_btn .mui-btn{
+	margin: 0;
+	border-radius: 0;
+	font-size: 17px;
+	padding: 12px 0rem;
+}
+.letf-icon{
+	display: block;
+	font-size: 25px;
+}
+.red{
+	color: red!important
+}
+/*弹出框*/
+.modal{
+	position: fixed;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	background: rgba(0,0,0,.2);
+
+	
+}
+.modal-content{
+	padding: 15px;
+	width: 85%;
+	display: block;
+	background: #fff;
+	border-radius: 3px;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	-webkit-transform: translate3D(-50%,-50%,0);
+	-ms-transform: translate3D(-50%,-50%,0);
+	-o-transform: translate3D(-50%,-50%,0);
+	transform: translate3D(-50%,-50%,0);
+}
+.modal-header{
+	color: #e60012;
+	font-size: 1.3rem;
+	letter-spacing: 1px;
+	margin-bottom: 15px;
+}
+.modal-body ul,.modal-body ul li{
+	margin:  0;
+	padding: 0;
+	list-style: none;
+	color: #000;
+	font-size:1rem;
+	letter-spacing: 2px;
+}
+.modal-body ul li {
+	margin-bottom: 10px;
+}
+.modal-body ul li span{
+	color: #888888;
+	font-size: 1.1rem;
+	margin-right: 1rem;
+	font-weight: 400;
+}
+.modal-footer{
+	margin-top: 20px;
+}
+.modal .mui-btn{
+	display: block;
+    width: 95%;
+    font-size: 1.5rem;
+    letter-spacing: 1rem;
+    margin-top: 2rem;
+}
+.fade{
+	display: none;
+}
+/*订单详情*/
+.details-header{
+	padding: 15px;
+	color: #898989;
+	background: #eeeeee;
+}
+.details-header .details-id{
+	display: inline-block;
+    color: #000;
+    margin: 0 10px;
+    letter-spacing: 1px;
+    width: 47%;
+    word-wrap: break-word;
+}
+.details-body{
+	padding: 15px;
+	color: #707070;
+}
+.details-body .d-header{
+	color: #888fb0;
+	font-size: 1.1rem;
+	font-weight: 400;
+
+}
+.details-body ul,.details-body ul li{
+	margin: 0;
+	padding: 0;
+	list-style: none;
+	margin: 10px 0;
+	letter-spacing: 1px;
+	color: #707070;
+}
+.details-body ul li span{
+	display: inline-block;
+	text-align: right;
+	width: 25%;
+	color: #afb4cc;
+	margin-right: 20px;
+
+}
+.btn-clock{
+	width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #b1bef2;
+    text-align: left;
+    color: #aaa;
+}
+.textarea{
+   	 border: 1px solid #b1bef2;
+	 background: transparent;
+	  color: #aaa;
+}
+.orders .mui-table-view:before,.orders .mui-table-view:after{
+	/*height: 0;*/
+	background-color: #e9effd;
+}
+.orders .mui-grid-view.mui-grid-9 .mui-table-view-cell{
+	border: none;
+}
+.mui-padd-color .mui-table-view{
+	background: #f1f3ff;
+}
+ .addressee:nth-last-child(1){
+	margin-bottom: 60px;
+}
+.address-title{
+	color: #8c98cc;
+	font-size:1rem;
+}
+/*配送*/
+.mui-icon-syswhite{
+	background: url(../images/syswhite.png) no-repeat;
+	background-size: contain;
+    height: 30px;
+    width: 28px;
+    margin-top: 12px;
+    margin-right: 3px !important;
+
+}
+.background-white{
+	background: #fff;
+}
+
+.distribution-list b{
+	display: inline-block;
+	margin-left: .2rem;
+	font-weight: normal;
+	color: #e60012;
+	letter-spacing: 2px;
+	font-size: 1rem;
+}
+.distribution-title{
+	background: #eeeeee;
+	padding: 10px 10px;
+	border:none;
+	color: #626262;
+	font-weight: bold;
+}
+.distribution-person{
+	font-family: "微软雅黑";
+	font-size: .9rem;
+	color: #e60012;
+	font-weight: 500;
+}
+.distribution-person span{
+	margin-left: .7rem;
+	color: #898989;
+}
+.distribution-phone{
+	color: #979fcd;
+	font-size:14px;
+}
+/*首页*/
+.menu{
+	color: #fff;
+	font-weight: bold;
+	padding: 0;
+	height: 90px;
+	width: 80%;
+	margin:  0 auto;
+	font-size: 25px;
+	line-height: 90px;
+	vertical-align: middle;
+	margin-top: 5rem;
+}
+.menu span.menu_icon{
+	display: inline-block;
+	background: url(../images/car.png) no-repeat;
+    background-size: 225% 79%;
+    background-position: -22px 2px;
+    width: 70px;
+    height: 65px;
+    vertical-align: middle;
+
+}
+.mui-btn-success{
+	border: 1px solid #80c269;
+	background-color: #80c269;
+}
+.menu span.aspect{
+	display: inline-block;
+	background: url(../images/car.png) no-repeat;
+    background-size: 238% 99%;
+    background-position: 44px 5px;
+    width: 72px;
+    height: 65px;
+    vertical-align: middle;
+    margin-left: -30px;
+}
+.menu-second .menu_icon{
+	background-position: -92px 5px !important;
+}
+/*登陆*/
+.mui-form{
+	margin-top: 50px;
+	font-family: "微软雅黑";
+}
+.mui-form .mui-input-row{
+	position: relative;
+	padding: 6px 0;
+}
+.mui-form .mui-input-row i{
+	position: absolute;
+	top: 50%;
+	margin-top: -14px;
+	left: 30px;
+
+}
+.mui-form .mui-input-row  input{
+	border: none;
+	padding-left: 60px;
+	margin-bottom: 0;
+}
+.mui-form .mui-btn{
+	width: 90%;
+    margin: 0 auto;
+    margin-top: 80px;
+    color: #FFF;
+    border-radius: 10px;
+    background: #8c98cc;
+    padding: 10px 0;
+}
+.mui-input-row:first-child:after {
+    border-top: 1px solid #c8c7cc;
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    -webkit-transform-origin: 0 0;
+    -webkit-transform: scale(1);
+    pointer-events: none;
+}
+.mui-input-row:after {
+    border-bottom: 1px solid #c8c7cc;
+    display: block;
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    -webkit-transform-origin: 0 0;
+    -webkit-transform: scale(1);
+    pointer-events: none;
+}
+/*新登录*/
+.logining{
+	background-color: rgba(247,247,247,0);
+	font-family: "微软雅黑";
+}
+.logining a b{
+	font-weight: normal;
+	font-size: 16px;
+	font-family: "微软雅黑";
+}
+.logining ~ .mui-content img {
+    width: 100%;
+}
+.login-from .login-input{
+	margin: 0 15px;
+	border: 1px solid #c9c9c9;
+	/* margin-bottom: 20px; */
+	margin-top: 20px;
+}
+.login-from .login-input .login-title{
+	text-align: center;
+	font-size: 1.1rem;
+	line-height: 1.1rem;
+	color: #bfbfbf;
+	font-family: "微软雅黑";
+
+}
+.login-from .login-input input{
+	padding: 0;
+	margin: 0;
+	border: none;
+	text-align: center;
+	height: 40px;
+	margin-top: 5px;
+	color: #626262;
+	/* font-weight: bold; */
+	letter-spacing: 1px;
+}
+.login-input label{
+	margin: 0 auto;
+	display: inline-block;
+	width: 48%;
+	position: relative;
+	color: #898989;
+	font-size: 1rem;
+	font-family: "微软雅黑";
+}
+.login-input label input{
+	opacity: 0;
+}
+.login-input label span{
+	display: inline-block;
+	width: 1rem;
+	height: 1rem;
+	border: 1px solid #c9c9c9;
+	vertical-align: middle;
+	border-radius: 3px;
+	margin-bottom: 3px;
+	margin-right: 3px;
+	background: url(../images/right.png) no-repeat;
+	background-size: 100% 200%;
+}
+.login-input label input:checked+span{
+	background-position: 0 -13px;
+}
+.login-from .mui-btn{
+	width: 85%;
+	margin: 0 auto;
+	background: #00a1ea;
+	font-size: 1.5rem;
+	letter-spacing: 3px;
+	padding: 6px 0;
+	margin-top: 10px;
+	border: none;
+}
+.border_none{
+	border: none !important; 
+}
+.border_none:after,.border_none:before{
+	height: 0;
+}
+.border_nobottom{
+	border-bottom: none !important;
+}
+/*导航*/
+.mui-segmented-control{
+	background: #eeeeee;
+}
+.mui-control-item{
+	letter-spacing: 1px;
+	color: #898989 !important;
+	border-right: 1px solid #eee;
+	position: relative;
+}
+.mui-control-item span{
+	display: inline-block;
+	width: 100%;
+}
+.mui-control-item b{
+	position: absolute;
+	right: 0;
+	width: 1px ;
+	top: 9px;
+	height: 20px;
+	background: #959595 ;
+	border-color: #959595 ;
+}
+.mui-control-item.mui-active{
+	background: #b4d465 !important;
+	color: #fff !important;
+}
+.mui-control-item.mui-active b{
+	width: 0;
+}
+/*隔行变色*/
+.interleave .mui-table-view-cell:nth-of-type(2n){
+	background: #f1f9fc;
+}
+.interleave:after{
+	 background-color: #dae1ef;
+
+}
+.mui-table-view-cell:after {
+    background-color: #e8eefc;
+}
+.mui-table-view-cell>.mui-slider-handle {
+   background: transparent;
+}
+.mui-table-view-cell.mui-active{
+	background: #bee8fe !important;
+}
+#orderForm .mui-table-view-cell.mui-active{
+	background: #fff !important;
+}
+.mui-table-view-cell.mui-active .mui-slider-handle{
+	background: transparent;
+}
+.distribution-list{
+	color: #535353;
+	letter-spacing: 1px;
+}
+.before-none:before{
+	height: 0;
+}
+.phone{
+	display: inline-block;
+	background: url(../images/phone.png) no-repeat;
+	background-size: 100% 100%;
+	height: 1.2rem;
+    width: 1.2rem;
+    margin-left: 2rem;
+}
+.express{
+	display: block;
+	margin: 0 auto;
+	padding: .5rem 1rem;
+	font-size: 1.2rem;
+	letter-spacing: 2px;
+	float: left;
+    margin-left: 35px;
+}
+.mui-input-row:first-child:after{
+	border:none;
+}
+.express2 {
+    display: block;
+    margin: 0 auto;
+    padding: .5rem 1rem;
+    font-size: .8rem;
+    letter-spacing: 2px;
+
+}
+.express1 {
+    margin: 0 auto;
+    padding: .5rem 1rem;
+    font-size: 1.2rem;
+    letter-spacing: 2px;
+    /* float: left; */
+    /* margin-left: 35px; */
+}
+.mui-btn-green{
+	background: #b4d465 !important;
+}

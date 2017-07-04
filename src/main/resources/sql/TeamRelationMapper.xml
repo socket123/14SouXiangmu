@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.vrv.mapper.TeamRelationMapper" >
+  <resultMap id="BaseResultMap" type="com.vrv.entity.TeamRelation" >
+    <id column="id" property="id" jdbcType="INTEGER" />
+    <result column="team_id" property="teamId" jdbcType="INTEGER" />
+    <result column="other_id" property="otherId" jdbcType="INTEGER" />
+    <result column="type" property="type" jdbcType="INTEGER" />
+    <result column="ss_order" property="ssOrder" jdbcType="INTEGER"/>
+
+    <result column="ids" property="ids" jdbcType="INTEGER" />
+    <result column="user_name" property="userName" jdbcType="VARCHAR" />
+    <result column="telephone" property="telephone" jdbcType="VARCHAR" />
+  </resultMap>
+  <sql id="Base_Column_List" >
+    id, team_id, other_id, type,ss_order
+  </sql>
+  <sql id="Base_Column_List_t" >
+    tr.id, tr.team_id, tr.other_id, tr.type,tr.ss_order
+  </sql>
+
+
+
+  <select id="selectResourceByTeamId" resultType="com.vrv.entity.SSResource" parameterType="java.lang.Integer" >
+    SELECT * FROM area_code a
+	INNER JOIN team_relation r ON r.other_id = a.id 
+	WHERE r.type = 2 and r.team_id = #{teamId}
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from team_relation
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+  
+  <select id="selectByTeam" resultMap="BaseResultMap" parameterType="java.lang.Integer" >
+    select 
+    <include refid="Base_Column_List" />
+    from team_relation
+    where team_id = #{teamId,jdbcType=INTEGER} and type = #{type}
+  </select>
+
+  <!--获取 根据 类型-->
+  <select id="selectByTeam_type" resultMap="BaseResultMap" parameterType="com.vrv.entity.TeamRelation" >
+     SELECT   <include refid="Base_Column_List_t" />,ss.id ids,ss.user_name userName,ss.telephone telephone  FROM `team_relation` tr
+      LEFT JOIN `ss_user` ss ON tr.`other_id` = ss.`id`
+    <where>
+      <if test="teamId != null ">
+        and tr.`team_id` = #{teamId}
+      </if>
+     and  tr.`type` = '4'
+    </where>
+
+  </select>
+
+  <select id="findTeamRelation" parameterType="com.vrv.entity.TeamRelation" resultType="java.lang.Integer">
+     SELECT count(*) FROM team_relation WHERE type = 3 AND other_id = #{otherId} 
+     <if test="teamId !=null and ''!=teamId">
+        AND team_id != #{teamId}
+     </if>
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer" >
+    delete from team_relation
+    where id = #{id,jdbcType=INTEGER}
+  </delete>
+  
+  <delete id="deleteByTeam" parameterType="java.lang.Integer" >
+    delete from team_relation
+    where team_id = #{teamId,jdbcType=INTEGER} and type = #{type}
+  </delete>
+  
+  <insert id="insertSelective" parameterType="com.vrv.entity.TeamRelation" useGeneratedKeys="true" keyProperty="id">
+    insert into team_relation
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="teamId != null" >
+        team_id,
+      </if>
+      <if test="otherId != null" >
+        other_id,
+      </if>
+      <if test="type != null" >
+        type,
+      </if>
+      <if test="type != 0" >
+        ss_order
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="teamId != null" >
+        #{teamId,jdbcType=INTEGER},
+      </if>
+      <if test="otherId != null" >
+        #{otherId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        #{type,jdbcType=INTEGER},
+      </if>
+       <if test="type != 0" >
+        #{ssOrder,jdbcType=INTEGER},
+      </if>
+    </trim>
+  </insert>
+  
+  <update id="updateByPrimaryKeySelective" parameterType="com.vrv.entity.TeamRelation" >
+    update team_relation
+    <set >
+      <if test="teamId != null" >
+        team_id = #{teamId,jdbcType=INTEGER},
+      </if>
+      <if test="otherId != null" >
+        other_id = #{otherId,jdbcType=INTEGER},
+      </if>
+      <if test="type != null" >
+        type = #{type,jdbcType=INTEGER},
+      </if>
+      <if test="type != 0" >
+        ss_order = #{ssOrder,jdbcType=INTEGER},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+</mapper>
